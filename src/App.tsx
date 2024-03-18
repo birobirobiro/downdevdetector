@@ -91,7 +91,7 @@ function App() {
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
       <main className="flex flex-col items-center justify-center h-full py-20 px-10">
         <div className="flex flex-col text-center mb-10 gap-2">
-          <h1 className="text-3xl font-bold">DevDownDetector</h1>
+          <h1 className="text-3xl font-bold">DownDevDetector</h1>
 
           <span>
             This app list all the services that are currently down and use
@@ -102,7 +102,8 @@ function App() {
               target="_blank"
             >
               Atlassian Status Page
-            </a>
+            </a>{"  "}
+            and others (soon).
           </span>
 
           <div className="flex gap-2 items-center justify-center">
