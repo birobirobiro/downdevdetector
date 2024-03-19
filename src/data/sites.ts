@@ -65,6 +65,10 @@ export const websites = [
     name: "Trello",
     url: `https://trello.status.atlassian.com/${base_url_atlassian}`,
   },
+  {
+    name: "Dropbox",
+    url: `https://status.dropbox.com/${base_url_atlassian}`,
+  },
 
   // Websites by Incident.io
   // {
