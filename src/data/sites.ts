@@ -77,17 +77,14 @@ export const websites = [
     name: "CircleCI",
     url: `https://status.circleci.com/${base_url_atlassian}`,
   },
-  {
-    name: "Sentry",
-    url: `https://status.sentry.io/${base_url_atlassian}`,
-  },
+  // {
+  //   name: "Sentry",
+  //   url: `https://status.sentry.io/${base_url_atlassian}`,
+  // },
   {
     name: "Travis CI",
     url: `https://www.traviscistatus.com/${base_url_atlassian}`,
   },
-
-
-
   // Websites by Incident.io
   // {
   //   name: "Dub.co",
