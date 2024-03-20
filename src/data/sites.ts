@@ -69,7 +69,14 @@ export const websites = [
     name: "Dropbox",
     url: `https://status.dropbox.com/${base_url_atlassian}`,
   },
-
+    name: "Udemy",
+    url: `https://status.udemy.com/${base_url_atlassian}`,
+  },
+  {
+    name: "Cloudflare",
+    url: `https://www.cloudflarestatus.com/${base_url_atlassian}`,
+  },
+    
   // Websites by Incident.io
   // {
   //   name: "Dub.co",
