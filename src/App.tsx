@@ -80,12 +80,21 @@ function App() {
         return "text-green-500";
       case "unstable":
         return "text-yellow-500";
+      case "degraded_performance":
+        return "text-yellow-500";
+      case "partial_outage":
+        return "text-orange-500";
+      case "major_outage":
+        return "text-red-500";
       case "down":
         return "text-red-500";
+      case "under_maintenance":
+        return "text-blue-500";
       default:
-        return "text-black";
+        return "text-muted-foreground";
     }
   };
+
 
   return (
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
@@ -107,10 +116,13 @@ function App() {
           </span>
 
           <div className="flex gap-2 items-center justify-center">
-            <span className="text-green-500">operational</span>
-            <span className="text-yellow-500">unstable</span>
-            <span className="text-red-500">down</span>
+            <span className="text-green-500">Operational</span>
+            <span className="text-yellow-500">Unstable</span>
+            <span className="text-red-500">Down</span>
+            <span className="text-orange-500">Partial Outage</span>
+            <span className="text-blue-500">Under Maintenance</span>
           </div>
+
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {websites.map((website, index) => (
@@ -120,14 +132,24 @@ function App() {
                   {website.name}
                 </CardTitle>
                 <CardDescription
-                  className={`${websiteData[index]?.status.description !==
-                    "All Systems Operational"
-                    ? "text-yellow-500"
-                    : ""
+                  className={`${websiteData[index]?.status.description === "All Systems Operational"
+                    ? "text-green-500"
+                    : websiteData[index]?.status.description === "Major System Outage"
+                      ? "text-red-500"
+                      : websiteData[index]?.status.description === "Partial System Outage" ||
+                        websiteData[index]?.status.description === "Degraded System Service" ||
+                        websiteData[index]?.status.description === "Partially Degraded Service"
+                        ? "text-orange-500"
+                        : websiteData[index]?.status.description === "Minor Service Outage"
+                          ? "text-yellow-500"
+                          : websiteData[index]?.status.description === "Service Under Maintenance"
+                            ? "text-blue-500"
+                            : ""
                     }`}
                 >
                   {websiteData[index]?.status.description}
                 </CardDescription>
+
               </CardHeader>
               <CardContent>
                 <ScrollArea className="h-80">
