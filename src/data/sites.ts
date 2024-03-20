@@ -73,6 +73,19 @@ export const websites = [
     name: "Cloudflare",
     url: `https://www.cloudflarestatus.com/${base_url_atlassian}`,
   },
+  {
+    name: "CircleCI",
+    url: `https://status.circleci.com/${base_url_atlassian}`,
+  },
+  {
+    name: "Sentry",
+    url: `https://status.sentry.io/${base_url_atlassian}`,
+  },
+  {
+    name: "Travis CI",
+    url: `https://www.traviscistatus.com/${base_url_atlassian}`,
+  },
+
 
 
   // Websites by Incident.io
