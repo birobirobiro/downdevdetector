@@ -17,12 +17,12 @@ type Component = {
   name: string;
   url: string;
   status: string;
-}
+};
 
 type Status = {
   indicator: string;
   description: string;
-}
+};
 
 type Page = {
   id: string;
@@ -30,13 +30,13 @@ type Page = {
   url: string;
   status: string;
   updated_at: string;
-}
+};
 
 type IncidentsProps = {
   components: Component[];
   status: Status;
   page: Page;
-}
+};
 
 function App() {
   const [websiteData, setWebsiteData] = useState<IncidentsProps[]>([]);
@@ -95,7 +95,6 @@ function App() {
     }
   };
 
-
   return (
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
       <main className="flex flex-col items-center justify-center h-full py-20 px-10">
@@ -104,93 +103,120 @@ function App() {
 
           <span>
             This app list all the services that are currently down and use
-            service{"  "}
+            service{" "}
             <a
               className="underline text-muted-foreground"
               href="https://status.atlassian.com/"
               target="_blank"
+              rel="noopener noreferrer"
             >
               Atlassian Status Page
-            </a>{"  "}
+            </a>{" "}
             and others (soon).
           </span>
 
           <div className="flex gap-2 items-center justify-center">
-            <span className="text-green-500">Operational</span>
-            <span className="text-yellow-500">Unstable</span>
-            <span className="text-red-500">Down</span>
-            <span className="text-orange-500">Partial Outage</span>
-            <span className="text-blue-500">Under Maintenance</span>
+            <span className="text-green-500">operational</span>
+            <span className="text-yellow-500">unstable</span>
+            <span className="text-red-500">down</span>
           </div>
-
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {websites.map((website, index) => (
-            <Card key={index}>
-              <CardHeader>
-                <CardTitle className="text-lg font-bold">
-                  {website.name}
-                </CardTitle>
-                <CardDescription
-                  className={`${websiteData[index]?.status.description === "All Systems Operational"
-                    ? "text-green-500"
-                    : websiteData[index]?.status.description === "Major System Outage"
-                      ? "text-red-500"
-                      : websiteData[index]?.status.description === "Partial System Outage" ||
-                        websiteData[index]?.status.description === "Degraded System Service" ||
-                        websiteData[index]?.status.description === "Partially Degraded Service"
-                        ? "text-orange-500"
-                        : websiteData[index]?.status.description === "Minor Service Outage"
+            <>
+              {loading ? (
+                <Skeleton>
+                  <Card className="w-80 h-80">
+                    <CardHeader>
+                      <CardTitle className="text-lg font-bold">
+                        {website.name}
+                      </CardTitle>
+                      <CardDescription className="mb-2">
+                        <Skeleton className="h-4 w-full" />
+                      </CardDescription>
+                      <CardContent className="flex flex-col gap-5 w-full h-full">
+                        <ScrollArea className="h-80">
+                          <ul className="flex flex-col w-full h-full justify-between gap-5">
+                            <li>
+                              <Skeleton className="h-4" />
+                            </li>
+                            <li>
+                              <Skeleton className="h-4" />
+                            </li>
+                            <li>
+                              <Skeleton className="h-4" />
+                            </li>
+                            <li>
+                              <Skeleton className="h-4" />
+                            </li>
+                            <li>
+                              <Skeleton className="h-4" />
+                            </li>
+                          </ul>
+                        </ScrollArea>
+                        <CardFooter className="mt-2">
+                          <Skeleton className="h-4 w-1/2" />
+                        </CardFooter>
+                      </CardContent>
+                    </CardHeader>
+                  </Card>
+                </Skeleton>
+              ) : (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg font-bold">
+                      {website.name}
+                    </CardTitle>
+                    <CardDescription
+                      className={`${websiteData[index]?.status.description !==
+                          "All Systems Operational"
                           ? "text-yellow-500"
-                          : websiteData[index]?.status.description === "Service Under Maintenance"
-                            ? "text-blue-500"
-                            : ""
-                    }`}
-                >
-                  {websiteData[index]?.status.description}
-                </CardDescription>
+                          : ""
+                        }`}
+                    >
+                      {websiteData[index]?.status.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ScrollArea className="h-80">
+                      <ul>
+                        {websiteData[index]?.components.map((component) => (
+                          <li key={component.id}>
+                            <div
+                              className={`
+                                ${getStatusColor(component.status)}
+                                flex gap-2 items-center
+                              `}
+                            >
+                              <p>{component.name}</p>-<p>{component.status}</p>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </ScrollArea>
 
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-80">
-                  <ul>
-                    {websiteData[index]?.components.map((component) => (
-                      <li key={component.id}>
-                        {loading ? (
-                          <Skeleton className="h-6 w-full flex gap-4 flex-col my-2" />
-                        ) : (
-                          <div
-                            className={`
-            ${getStatusColor(component.status)}
-            flex gap-2 items-center
-            `}
-                          >
-                            <p>{component.name}</p>
-                            -
-                            <p>{component.status}</p>
-                          </div>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </ScrollArea>
-
-                <CardFooter className="justify-center mt-2">
-                  <p className="text-muted-foreground text-center">
-                    Last updated:{" "}
-                    {new Date(
-                      websiteData[index]?.page.updated_at
-                    ).toLocaleString("en-US")}
-                  </p>
-                </CardFooter>
-              </CardContent>
-            </Card>
+                    <CardFooter className="justify-center mt-2">
+                      <p className="text-muted-foreground text-center">
+                        Last updated:{" "}
+                        {new Date(
+                          websiteData[index]?.page.updated_at
+                        ).toLocaleString("en-US")}
+                      </p>
+                    </CardFooter>
+                  </CardContent>
+                </Card>
+              )}
+            </>
           ))}
         </div>
 
         <footer className="mt-10">
           <p className="text-center text-muted-foreground">
-            <a href="https://birobirobiro.dev" target="_blank">
+            <a
+              href="https://birobirobiro.dev"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               birobirobiro.dev
             </a>
           </p>
