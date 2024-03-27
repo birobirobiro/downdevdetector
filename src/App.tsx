@@ -104,7 +104,7 @@ function App() {
 
   return (
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-      <main className="flex flex-col items-center justify-center w-full h-full py-20 px-10 overflow-y-auto relative">
+      <main className="flex flex-col items-center justify-center w-full h-full py-20 px-10 overflow-y-auto relative lg:max-w-[1440px] mx-auto">
         <div className="absolute top-3 right-3">
           <ModeToggle />
         </div>
