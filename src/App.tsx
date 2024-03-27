@@ -13,6 +13,7 @@ import { websites } from "@/data/sites";
 import { Skeleton } from "./components/ui/skeleton";
 import { Input } from "./components/ui/input";
 import { Badge } from "./components/ui/badge";
+import { ModeToggle } from "./components/mode-toggle";
 
 type Component = {
   id: string;
@@ -52,7 +53,7 @@ function App() {
         const data = await Promise.all(
           websites.map((website) => getStatus(website.url))
         );
-        const sortedData = data.sort((a, b) => 
+        const sortedData = data.sort((a, b) =>
           a.page.name.localeCompare(b.page.name)
         );
         // console.log(data);
@@ -103,7 +104,10 @@ function App() {
 
   return (
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-      <main className="flex flex-col items-center justify-center w-full h-full py-20 px-10 overflow-y-auto">
+      <main className="flex flex-col items-center justify-center w-full h-full py-20 px-10 overflow-y-auto relative">
+        <div className="absolute top-3 right-3">
+          <ModeToggle />
+        </div>
         <div className="flex flex-col text-center mb-10 gap-3">
           <h1 className="text-2xl md:text-3xl font-bold">DownDevDetector</h1>
 
@@ -141,7 +145,7 @@ function App() {
             .filter((data) =>
               data.page.name.toLowerCase().includes(searchQuery.toLowerCase())
             )
-            .map((website) => (
+            .map((website, index) => (
               <div key={website.page.id}>
                 {loading ? (
                   <Skeleton>
@@ -187,24 +191,44 @@ function App() {
                         {website.page.name}
                       </CardTitle>
                       <CardDescription
-                        className={`${getStatusColor(website.status.indicator)} mb-2`}
+                        className={`${websiteData[index]?.status.description ===
+                          "All Systems Operational"
+                          ? "text-green-500"
+                          : websiteData[index]?.status.description ===
+                            "Major System Outage"
+                            ? "text-red-500"
+                            : websiteData[index]?.status.description ===
+                              "Partial System Outage" ||
+                              websiteData[index]?.status.description ===
+                              "Degraded System Service" ||
+                              websiteData[index]?.status.description ===
+                              "Partially Degraded Service"
+                              ? "text-orange-500"
+                              : websiteData[index]?.status.description ===
+                                "Minor Service Outage"
+                                ? "text-yellow-500"
+                                : websiteData[index]?.status.description ===
+                                  "Service Under Maintenance"
+                                  ? "text-blue-500"
+                                  : ""
+                          } mb-2`}
                       >
                         {website.status.description}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
                       <ScrollArea className="h-80">
-                      <ul>
-                        {website.components.map((component) => (
-                          <li key={component.id}>
-                            <div
-                              className={`${getStatusColor(component.status)} flex gap-2 items-center`}
-                            >
-                              <p>{component.name}</p> - <p>{component.status}</p>
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
+                        <ul>
+                          {website.components.map((component) => (
+                            <li key={component.id}>
+                              <div
+                                className={`${getStatusColor(component.status)} flex gap-2 items-center`}
+                              >
+                                <p>{component.name}</p> - <p>{component.status}</p>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
                       </ScrollArea>
 
                       <CardFooter className="justify-center mt-2">
