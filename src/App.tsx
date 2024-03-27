@@ -11,6 +11,8 @@ import {
 import { ScrollArea } from "./components/ui/scroll-area";
 import { websites } from "@/data/sites";
 import { Skeleton } from "./components/ui/skeleton";
+import { Input } from "./components/ui/input";
+import { Badge } from "./components/ui/badge";
 
 type Component = {
   id: string;
@@ -41,6 +43,7 @@ type IncidentsProps = {
 function App() {
   const [websiteData, setWebsiteData] = useState<IncidentsProps[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     async function fetchData() {
@@ -97,13 +100,12 @@ function App() {
 
   return (
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-      <main className="flex flex-col items-center justify-center h-full py-20 px-10">
-        <div className="flex flex-col text-center mb-10 gap-2">
-          <h1 className="text-3xl font-bold">DownDevDetector</h1>
+      <main className="flex flex-col items-center justify-center w-full h-full py-20 px-10 overflow-y-auto">
+        <div className="flex flex-col text-center mb-10 gap-3">
+          <h1 className="text-2xl md:text-3xl font-bold">DownDevDetector</h1>
 
-          <span>
-            This app list all the services that are currently down and use
-            service{" "}
+          <span className="text-sm md:text-base">
+            This app lists all the services currently down and uses service{" "}
             <a
               className="underline text-muted-foreground"
               href="https://status.atlassian.com/"
@@ -115,111 +117,144 @@ function App() {
             and others (soon).
           </span>
 
-          <div className="flex gap-2 items-center justify-center">
-            <span className="text-green-500">Operational</span>
-            <span className="text-yellow-500">Unstable</span>
-            <span className="text-red-500">Down</span>
-            <span className="text-orange-500">Partial Outage</span>
-            <span className="text-blue-500">Under Maintenance</span>
+          <div className="flex flex-wrap justify-center gap-2">
+            <Badge variant="outline" className="text-green-500 text-xs md:text-sm">Operational</Badge>
+            <Badge variant="outline" className="text-yellow-500 text-xs md:text-sm">Unstable</Badge>
+            <Badge variant="outline" className="text-red-500 text-xs md:text-sm">Down</Badge>
+            <Badge variant="outline" className="text-orange-500 text-xs md:text-sm">Partial Outage</Badge>
+            <Badge variant="outline" className="text-blue-500 text-xs md:text-sm">Under Maintenance</Badge>
           </div>
+
+          <Input
+            type="search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search services..."
+            className="w-full mx-auto mt-5"
+          />
         </div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {websites.map((website, index) => (
-            <div key={index}>
-              {loading ? (
-                <Skeleton>
-                  <Card className="w-80 h-80" key={index}>
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-5 w-full h-full items-center">
+          {websites
+            .filter((website) =>
+              website.name.toLowerCase().includes(searchQuery.toLowerCase())
+            )
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map((website, index) => (
+              <div key={index}>
+                {loading ? (
+                  <Skeleton>
+                    <Card className="w-80 h-80" key={index}>
+                      <CardHeader>
+                        <CardTitle className="text-lg font-bold">
+                          {website.name}
+                        </CardTitle>
+                        <CardDescription className="mb-2">
+                          <Skeleton className="h-4 w-full" />
+                        </CardDescription>
+                        <CardContent className="flex flex-col gap-5 w-full h-full">
+                          <ScrollArea className="h-80">
+                            <ul className="flex flex-col w-full h-full justify-between gap-5">
+                              <li>
+                                <Skeleton className="h-4" />
+                              </li>
+                              <li>
+                                <Skeleton className="h-4" />
+                              </li>
+                              <li>
+                                <Skeleton className="h-4" />
+                              </li>
+                              <li>
+                                <Skeleton className="h-4" />
+                              </li>
+                              <li>
+                                <Skeleton className="h-4" />
+                              </li>
+                            </ul>
+                          </ScrollArea>
+                          <CardFooter className="mt-2">
+                            <Skeleton className="h-4 w-1/2" />
+                          </CardFooter>
+                        </CardContent>
+                      </CardHeader>
+                    </Card>
+                  </Skeleton>
+                ) : (
+                  <Card>
                     <CardHeader>
                       <CardTitle className="text-lg font-bold">
                         {website.name}
                       </CardTitle>
-                      <CardDescription className="mb-2">
-                        <Skeleton className="h-4 w-full" />
+                      <CardDescription
+                        className={`${websiteData[index]?.status.description ===
+                          "All Systems Operational"
+                          ? "text-green-500"
+                          : websiteData[index]?.status.description ===
+                            "Major System Outage"
+                            ? "text-red-500"
+                            : websiteData[index]?.status.description ===
+                              "Partial System Outage" ||
+                              websiteData[index]?.status.description ===
+                              "Degraded System Service" ||
+                              websiteData[index]?.status.description ===
+                              "Partially Degraded Service"
+                              ? "text-orange-500"
+                              : websiteData[index]?.status.description ===
+                                "Minor Service Outage"
+                                ? "text-yellow-500"
+                                : websiteData[index]?.status.description ===
+                                  "Service Under Maintenance"
+                                  ? "text-blue-500"
+                                  : ""
+                          }`}
+                      >
+                        {websiteData[index]?.status.description}
                       </CardDescription>
-                      <CardContent className="flex flex-col gap-5 w-full h-full">
-                        <ScrollArea className="h-80">
-                          <ul className="flex flex-col w-full h-full justify-between gap-5">
-                            <li>
-                              <Skeleton className="h-4" />
-                            </li>
-                            <li>
-                              <Skeleton className="h-4" />
-                            </li>
-                            <li>
-                              <Skeleton className="h-4" />
-                            </li>
-                            <li>
-                              <Skeleton className="h-4" />
-                            </li>
-                            <li>
-                              <Skeleton className="h-4" />
-                            </li>
-                          </ul>
-                        </ScrollArea>
-                        <CardFooter className="mt-2">
-                          <Skeleton className="h-4 w-1/2" />
-                        </CardFooter>
-                      </CardContent>
                     </CardHeader>
-                  </Card>
-                </Skeleton>
-              ) : (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg font-bold">
-                      {website.name}
-                    </CardTitle>
-                    <CardDescription
-                      className={`${websiteData[index]?.status.description === "All Systems Operational"
-                        ? "text-green-500"
-                        : websiteData[index]?.status.description === "Major System Outage"
-                          ? "text-red-500"
-                          : websiteData[index]?.status.description === "Partial System Outage" ||
-                            websiteData[index]?.status.description === "Degraded System Service" ||
-                            websiteData[index]?.status.description === "Partially Degraded Service"
-                            ? "text-orange-500"
-                            : websiteData[index]?.status.description === "Minor Service Outage"
-                              ? "text-yellow-500"
-                              : websiteData[index]?.status.description === "Service Under Maintenance"
-                                ? "text-blue-500"
-                                : ""
-                        }`}
-                    >
-                      {websiteData[index]?.status.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ScrollArea className="h-80">
-                      <ul>
-                        {websiteData[index]?.components.map((component) => (
-                          <li key={component.id}>
-                            <div
-                              className={`
-                                ${getStatusColor(component.status)}
-                                flex gap-2 items-center
-                              `}
-                            >
-                              <p>{component.name}</p>-<p>{component.status}</p>
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                    </ScrollArea>
+                    <CardContent>
+                      <ScrollArea className="h-80">
+                        <ul>
+                          {websiteData[index]?.components.map((component) => (
+                            <li key={component.id}>
+                              <div
+                                className={`
+                          ${getStatusColor(component.status)}
+                          flex gap-2 items-center
+                        `}
+                              >
+                                <p>{component.name}</p>-
+                                <p>{component.status}</p>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      </ScrollArea>
 
-                    <CardFooter className="justify-center mt-2">
-                      <p className="text-muted-foreground text-center">
-                        Last updated:{" "}
-                        {new Date(
-                          websiteData[index]?.page.updated_at
-                        ).toLocaleString("en-US")}
-                      </p>
-                    </CardFooter>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          ))}
+                      <CardFooter className="justify-center mt-2">
+                        <p className="text-muted-foreground text-center">
+                          Last updated:{" "}
+                          {new Date(
+                            websiteData[index]?.page.updated_at
+                          ).toLocaleString("en-US")}
+                        </p>
+                      </CardFooter>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+            ))}
         </div>
+
+        {websites.filter((website) =>
+          website.name.toLowerCase().includes(searchQuery.toLowerCase())
+        ).length === 0 && (
+            <div className="flex flex-col gap-2 items-center">
+              <span className="text-center text-red-500 mx-auto">
+                No results found for:
+              </span>
+
+              <span className="text-center text-red-500 font-bold">{searchQuery}</span>
+            </div>
+          )}
 
         <footer className="mt-10">
           <p className="text-center text-muted-foreground">
