@@ -52,8 +52,11 @@ function App() {
         const data = await Promise.all(
           websites.map((website) => getStatus(website.url))
         );
+        const sortedData = data.sort((a, b) => 
+          a.page.name.localeCompare(b.page.name)
+        );
         // console.log(data);
-        setWebsiteData(data);
+        setWebsiteData(sortedData);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -134,19 +137,18 @@ function App() {
           />
         </div>
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-5 w-full h-full items-center">
-          {websites
-            .filter((website) =>
-              website.name.toLowerCase().includes(searchQuery.toLowerCase())
+          {websiteData
+            .filter((data) =>
+              data.page.name.toLowerCase().includes(searchQuery.toLowerCase())
             )
-            .sort((a, b) => a.name.localeCompare(b.name))
-            .map((website, index) => (
-              <div key={index}>
+            .map((website) => (
+              <div key={website.page.id}>
                 {loading ? (
                   <Skeleton>
-                    <Card className="w-80 h-80" key={index}>
+                    <Card className="w-80 h-80" key={website.page.id}>
                       <CardHeader>
                         <CardTitle className="text-lg font-bold">
-                          {website.name}
+                          {website.page.name}
                         </CardTitle>
                         <CardDescription className="mb-2">
                           <Skeleton className="h-4 w-full" />
@@ -182,59 +184,33 @@ function App() {
                   <Card>
                     <CardHeader>
                       <CardTitle className="text-lg font-bold">
-                        {website.name}
+                        {website.page.name}
                       </CardTitle>
                       <CardDescription
-                        className={`${websiteData[index]?.status.description ===
-                          "All Systems Operational"
-                          ? "text-green-500"
-                          : websiteData[index]?.status.description ===
-                            "Major System Outage"
-                            ? "text-red-500"
-                            : websiteData[index]?.status.description ===
-                              "Partial System Outage" ||
-                              websiteData[index]?.status.description ===
-                              "Degraded System Service" ||
-                              websiteData[index]?.status.description ===
-                              "Partially Degraded Service"
-                              ? "text-orange-500"
-                              : websiteData[index]?.status.description ===
-                                "Minor Service Outage"
-                                ? "text-yellow-500"
-                                : websiteData[index]?.status.description ===
-                                  "Service Under Maintenance"
-                                  ? "text-blue-500"
-                                  : ""
-                          }`}
+                        className={`${getStatusColor(website.status.indicator)} mb-2`}
                       >
-                        {websiteData[index]?.status.description}
+                        {website.status.description}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
                       <ScrollArea className="h-80">
-                        <ul>
-                          {websiteData[index]?.components.map((component) => (
-                            <li key={component.id}>
-                              <div
-                                className={`
-                          ${getStatusColor(component.status)}
-                          flex gap-2 items-center
-                        `}
-                              >
-                                <p>{component.name}</p>-
-                                <p>{component.status}</p>
-                              </div>
-                            </li>
-                          ))}
-                        </ul>
+                      <ul>
+                        {website.components.map((component) => (
+                          <li key={component.id}>
+                            <div
+                              className={`${getStatusColor(component.status)} flex gap-2 items-center`}
+                            >
+                              <p>{component.name}</p> - <p>{component.status}</p>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
                       </ScrollArea>
 
                       <CardFooter className="justify-center mt-2">
                         <p className="text-muted-foreground text-center">
                           Last updated:{" "}
-                          {new Date(
-                            websiteData[index]?.page.updated_at
-                          ).toLocaleString("en-US")}
+                          {new Date(website.page.updated_at).toLocaleString("en-US")}
                         </p>
                       </CardFooter>
                     </CardContent>
