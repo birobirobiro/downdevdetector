@@ -85,6 +85,18 @@ export const websites = [
     name: "Claude IA",
     url: `https://status.anthropic.com/${base_url_atlassian}`,
   },
+  {
+    name: "AnyDesk",
+    url: `https://status.anydesk.com/${base_url_atlassian}`,
+  },
+  {
+    name: "Team Viewer",
+    url: `https://status.teamviewer.com/${base_url_atlassian}`,
+  },
+  {
+    name: "KingHost",
+    url: `https://status.kinghost.net.br/${base_url_atlassian}`,
+  },
   // Websites by Incident.io
   // {
   //   name: "Dub.co",
