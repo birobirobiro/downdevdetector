@@ -97,6 +97,10 @@ export const websites = [
     name: "KingHost",
     url: `https://status.kinghost.net.br/${base_url_atlassian}`,
   },
+  {
+    name: "Supabase",
+    url: `https://status.supabase.com/${base_url_atlassian}`,
+  },
   // Websites by Incident.io
   // {
   //   name: "Dub.co",
